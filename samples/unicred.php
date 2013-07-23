@@ -4,29 +4,34 @@ require '../src/OpenBoleto/Utils/Modulo.php';
 require '../src/OpenBoleto/BoletoAbstract.php';
 require '../src/OpenBoleto/Exception.php';
 require '../src/OpenBoleto/Agente.php';
-require '../src/OpenBoleto/Banco/Bradesco.php';
+require '../src/OpenBoleto/Banco/Unicred.php';
 
-use OpenBoleto\Banco\Bradesco;
+use OpenBoleto\Banco\Unicred;
 use OpenBoleto\Agente;
 
 $sacado = new Agente('Fernando Maia', '023.434.234-34', 'ABC 302 Bloco N', '72000-000', 'Brasília', 'DF');
 $cedente = new Agente('Empresa de cosméticos LTDA', '02.123.123/0001-11', 'CLS 403 Lj 23', '71000-000', 'Brasília', 'DF');
 
-$boleto = new Bradesco(array(
+$boleto = new Unicred(array(
     // Parâmetros obrigatórios
-    'dataVencimento' => new DateTime('2013-01-24'),
-    'valor' => 23.00,
-    'sequencial' => 75896452, // Até 11 dígitos
+    'dataVencimento' => new DateTime('2013-07-20'),
+    'valor' => 1093.79,
     'sacado' => $sacado,
     'cedente' => $cedente,
-    'agencia' => 1172, // Até 4 dígitos
-    'carteira' => 6, // 3, 6 ou 9
-    'conta' => 0403005, // Até 7 dígitos
+    'agencia' => 3302, // Até 4 dígitos
+    'carteira' => 51,
+    'conta' => 2259, // Até 8 dígitos
+    'sequencial' => '1395-1',
+
+    // Caso queira um número sequencial de 17 dígitos, a cobrança deverá:
+    // - Ser sem registro (Carteiras 16 ou 17)
+    // - Convênio com 6 dígitos
+    // Para isso, defina a carteira como 21 (mesmo sabendo que ela é 16 ou 17, isso é uma regra do banco)
 
     // Parâmetros recomendáveis
     //'logoPath' => 'http://empresa.com.br/logo.jpg', // Logo da sua empresa
-    'contaDv' => 2,
-    'agenciaDv' => 1,
+    // 'contaDv' => 2,
+    // 'agenciaDv' => 1,
     'descricaoDemonstrativo' => array( // Até 5
         'Compra de materiais cosméticos',
         'Compra de alicate',
@@ -38,8 +43,7 @@ $boleto = new Bradesco(array(
 
     // Parâmetros opcionais
     //'resourcePath' => '../resources',
-    //'cip' => '000', // Apenas para o Bradesco
-    //'moeda' => Bradesco::MOEDA_REAL,
+    //'moeda' => BancoDoBrasil::MOEDA_REAL,
     //'dataDocumento' => new DateTime(),
     //'dataProcessamento' => new DateTime(),
     //'contraApresentacao' => true,

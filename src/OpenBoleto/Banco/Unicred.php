@@ -31,7 +31,7 @@ use OpenBoleto\BoletoAbstract;
 use OpenBoleto\Exception;
 
 /**
- * Classe boleto Santander
+ * Classe boleto Unicred.
  *
  * @package    OpenBoleto
  * @author     Daniel Garajau <http://github.com/kriansa>
@@ -39,67 +39,35 @@ use OpenBoleto\Exception;
  * @license    MIT License
  * @version    0.1
  */
-class Santander extends BoletoAbstract
+class Unicred extends BoletoAbstract
 {
     /**
      * Código do banco
      * @var string
      */
-    protected $codigoBanco = '033';
+    protected $codigoBanco = '090';
 
     /**
      * Localização do logotipo do banco, referente ao diretório de imagens
      * @var string
      */
-    protected $logoBanco = 'santander.jpg';
+    protected $logoBanco = 'unicred.gif';
 
     /**
      * Linha de local de pagamento
      * @var string
      */
-    protected $localPagamento = 'Pagar preferencialmente no Banco Santander';
+    protected $localPagamento = 'Pagável em qualquer Banco até o vencimento';
 
     /**
      * Define as carteiras disponíveis para este banco
      * @var array
      */
-    protected $carteiras = array('101', '102', '201');
-
-    /**
-     * Define os nomes das carteiras para exibição no boleto
-     * @var array
-     */
-    protected $carteirasNomes = array('101' => 'Cobrança Simples ECR', '102' => 'Cobrança Simples CSR');
-
-    /**
-     * Define o valor do IOS - Seguradoras (Se 7% informar 7. Limitado a 9%) - Demais clientes usar 0 (zero)
-     * @var int
-     */
-    protected $ios;
-
-    /**
-     * Define o valor do IOS
-     *
-     * @param int $ios
-     */
-    public function setIos($ios)
-    {
-        $this->ios = $ios;
-    }
-
-    /**
-     * Retorna o atual valor do IOS
-     *
-     * @return int
-     */
-    public function getIos()
-    {
-        return $this->ios;
-    }
+    protected $carteiras = array('11', '21', '31', '41', '51');
 
     public function getNossoNumero($incluirDv = true)
     {
-        return self::zeroFill($this->sequencial, 13);
+        return $this->getCarteira() . '/' . self::zeroFill($this->sequencial, 12);
     }
 
     /**
@@ -110,21 +78,8 @@ class Santander extends BoletoAbstract
      */
     public function getCampoLivre()
     {
-        return '9' . self::zeroFill($this->getConta(), 7) .
-            $this->getNossoNumero() .
-            self::zeroFill($this->getIos(), 1) .
-            self::zeroFill($this->getCarteira(), 3);
-    }
+        $sequencial = self::zeroFill($this->sequencial, 12);
 
-    /**
-     * Define variáveis da view específicas do boleto do Santander
-     *
-     * @return array
-     */
-    public function getViewVars()
-    {
-        return array(
-            'esconde_uso_banco' => true,
-        );
+        return self::zeroFill($this->getAgencia(), 4) . self::zeroFill($this->getConta(), 10) . str_replace('-', '', $sequencial);
     }
 }
